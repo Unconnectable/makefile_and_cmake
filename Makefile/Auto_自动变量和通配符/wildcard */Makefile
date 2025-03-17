@@ -1,14 +1,17 @@
-CC = gcc       # 使用 gcc 作为 C 编译器
-CFLAGS = -g    # 启用调试信息
+new_contents = "hello:\n\techo \$$(cooly)"
 
-# 隐式规则 #1: 通过 C 链接器隐式规则生成可执行文件 blah
-# 隐式规则 #2: 通过 C 编译隐式规则生成 blah.o，因为 blah.c 存在
-blah: blah.o
+all:
+	mkdir -p subdir
+	printf $(new_contents) | sed -e 's/^ //' > subdir/makefile
+	@echo "---MAKEFILE CONTENTS---"
+	@cd subdir && cat makefile
+	@echo "---END MAKEFILE CONTENTS---"
+	cd subdir && $(MAKE)
 
-# 生成 blah.c 文件
-blah.c:
-	echo "int main() { return 0; }" > blah.c
+# Note that variables and exports. They are set/affected globally.
+cooly = "The subdirectory can see me!"
+export cooly
+# This would nullify the line above: unexport cooly
 
-# 清理生成的文件
 clean:
-	rm -f blah*
+	rm -rf subdir

@@ -91,7 +91,7 @@ clean:
 #再make clean的时候就不会输出具体内容
 ```
 
-2. 所有命令之前加上 ``.SILENT:``都不会输出原始的命令内容
+2. 所有命令之前加上 `.SILENT:`都不会输出原始的命令内容
 
 ```makefile
 .SILENT:
@@ -99,8 +99,6 @@ clean:
 xxxx
 xxxx
 ```
-
-
 
 ```makefile
 clean_file:
@@ -184,9 +182,9 @@ hello Sharon:
 
 # 自动变量和通配符
 
-##  \* 通配符 wildcard
+## \* 通配符 wildcard
 
-``$?``表示所有比目标更新的依赖文件(即那些被修改过的 .c 文件)**
+`$?`表示所有比目标更新的依赖文件(即那些被修改过的 .c 文件)\*\*
 
 ```makefile
 print: $(wildcard *.c)
@@ -275,21 +273,19 @@ CFLAGS = -g -Wall -O2 -std=c11   # 示例
 
 **CXXFLAGS**: 传递给 C++ 编译器的额外标志.
 
-
-
 ```makefile
 CXXFLAGS = -g -Wall -O2 -std=c++17   # 示例
 ```
 
 常用选项:
 
-​	启用调试信息: `-g`
+​ 启用调试信息: `-g`
 
-​	启用所有警告: `-Wall -Wextra`
+​ 启用所有警告: `-Wall -Wextra`
 
-​	优化级别: `-O2`
+​ 优化级别: `-O2`
 
-​	指定标准 (如 C++17): `-std=c++17`
+​ 指定标准 (如 C++17): `-std=c++17`
 
 **CPPFLAGS**: 传递给 C 预处理器的额外标志.
 
@@ -299,9 +295,9 @@ CPPFLAGS = -DDEBUG -Iinclude   # 示例
 
 常用选项:
 
-​	定义宏: `-DDEBUG`
+​ 定义宏: `-DDEBUG`
 
-​	添加包含目录: `-Iinclude`
+​ 添加包含目录: `-Iinclude`
 
 **LDFLAGS**: 传递给链接器的额外标志.
 
@@ -311,9 +307,9 @@ LDFLAGS = -Llib -pthread   # 示例
 
 常用选项:
 
-​	添加库目录: `-Llib`
+​ 添加库目录: `-Llib`
 
-​	指定链接选项: `-pthread`
+​ 指定链接选项: `-pthread`
 
 **LOADLIBES** 和 **LDLIBS**: 链接的库.
 
@@ -323,9 +319,9 @@ LDLIBS = -lm -lfoo   # 示例
 
 常用选项:
 
-​	链接数学库: `-lm`
+​ 链接数学库: `-lm`
 
-​	链接动态库: `-lfoo`
+​ 链接动态库: `-lfoo`
 
 ### 隐式规则的触发条件
 
@@ -402,7 +398,7 @@ clean:
 
 ```sh
 
-find . -maxdepth 1 -type f ! -name 'filename_' -exec rm -f {} +
+find . -maxdepth 1 -type f ! -name 'Makefile' -exec rm -f {} +
 ```
 
 ## 静态模式规则(Static Pattern Rules)
@@ -416,13 +412,13 @@ targets...: target-pattern: prereq-patterns ...
 
 通常使用通配符去实现目标模式和依赖模式.
 
-​	**目标**: `foo.o bar.o all.o`
+​ **目标**: `foo.o bar.o all.o`
 
-​	**目标模式**: `%.o`,匹配所有 `.o` 文件.
+​ **目标模式**: `%.o`,匹配所有 `.o` 文件.
 
-​	**依赖模式**: `%.c`,将 `%` 替换为匹配的主干 (例如 `foo`),生成依赖文件 `foo.c`.
+​ **依赖模式**: `%.c`,将 `%` 替换为匹配的主干 (例如 `foo`),生成依赖文件 `foo.c`.
 
-​	**命令**: 编译 `.c` 文件生成 `.o` 文件.
+​ **命令**: 编译 `.c` 文件生成 `.o` 文件.
 
 ### 手动编写规则的示例
 
@@ -472,6 +468,7 @@ all.c:
 clean:
 	rm -f *.c *.o all
 ```
+
 ### 流程
 
 1. 从 `all` 开始检查,发现需要 `foo.o bar.o all.o`.
@@ -481,3 +478,248 @@ clean:
    - 如果 `all.c` 不存在,使用 `all.c` 规则生成包含 `int main() { return 0; }` 的 `all.c` 文件.
 4. 回到静态模式规则,编译 `.c` 为 `.o`.
 5. 回到 `all`,链接 `.o` 为可执行文件 `all`.
+
+## 静态模式规则和过滤(Static Pattern Rules and Filter)
+
+```Makefile
+files = foo.c bar.o baz.h qux.c
+c_and_h_files = $(filter %.c %.h, $(files))
+
+```
+
+从 files 里筛选`.c`和`.h`文件
+
+```Makefile
+$(filter %.o,$(obj_files)): %.o: %.c
+	echo "target: $@ prereq: $<"
+
+$(filter %.result,$(obj_files)): %.result: %.raw
+	echo "target: $@ prereq: $<"
+```
+
+从 obj_files 中筛选出所有以 .o 结尾的文件
+`: %.o: %.c`是一个规则模式,表示每个`.o`依赖`.c`文件
+筛选`.result`文件 表示依赖于`.raw`文件
+
+## 模式规则(Pattern Rules)
+
+```makefile
+%.o : %.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
+```
+
+将所有的 `.c` 文件编译成 `.o` 文件
+
+双冒号:
+
+```makefile
+all: blah
+
+blah::
+	echo "hello"
+
+blah::
+	echo "hello again"
+
+#输出
+echo "hello"
+hello
+echo "hello again"
+hello again
+```
+
+对于同一个目标定义多个规则,会运行多次
+
+```makefile
+all: blah
+
+blah:
+	echo "hello"
+
+blah:
+	echo "hello again"
+#output
+Makefile:7: 警告：覆盖关于目标“blah”的配方
+Makefile:4: 警告：忽略关于目标“blah”的旧配方
+echo "hello again"
+hello again
+```
+
+单个冒号多个规则会被警告和覆盖，新的规则会覆盖旧的规则
+
+---
+
+## 命令与执行(Commands and execution)
+
+### 命令回显/静默(Command Echoing/Silencing)
+
+```makefile
+all:
+	@echo "This make line will not be printed"
+	echo "But this will"
+```
+
+`@`后面的不会被显示，只会执行
+
+### 双美元符号
+
+```makefile
+make_var = I am a make variable
+all:
+	sh_var='I am a shell variable'; echo $$sh_var
+
+	@echo $(make_var)
+```
+
+定义变量`make_var`，第二行`echo`这个变量
+`sh_var`定义在命令行中，要使用他需要在同一行`echo`,而且需要`$$`进行转义
+
+### 错误处理
+
+`-k` 选项：继续执行即使遇到错误:
+`make -k`假设 Makefile 中有多个目标，其中一个目标的命令失败了，make 会继续执行其他目标，而不是立即停止。
+
+-i 选项：忽略所有命令的错误:`make -i`,忽略所有命令的错误，继续执行后续的命令
+
+在命令前添加 -：忽略单个命令的错误:
+
+```makefile
+all: target1 target2 target3
+
+target1:
+    echo "Running target1"
+    false  # 这个命令会失败
+
+target2:
+    echo "Running target2"
+    -false  # 这个命令会失败，但错误会被忽略
+
+target3:
+    echo "Running target3"
+```
+
+```makefile
+new_contents = "hello:\n\ttouch inside_file"
+all:
+	mkdir -p subdir
+	printf $(new_contents) | sed -e 's/^ //' > subdir/makefile
+	cd subdir && $(MAKE)
+
+clean:
+	rm -rf subdir
+
+```
+
+流程:
+
+1. `new_contents`是一个字符串不会作为命令被使用
+2. `all`作为默认目标被执行
+3. 创建目录`subdir`,向`subdir/makefile`文件写入`new_contents`的内容
+4. 进入`subdir`然后递归调用`makefile`
+5. 当前目录的`makefile`内容是
+
+```makefile
+hello:
+	touch inside_file
+```
+
+输出结果
+
+```sh
+make
+
+mkdir -p subdir
+printf "hello:\n\ttouch inside_file" | sed -e 's/^ //' > subdir/makefile
+cd subdir && make
+make[1]: 进入目录“parent_dir/subdir”
+touch inside_file
+make[1]: 离开目录“parent_dir/subdir”
+```
+
+## 导出、环境变量和递归 make(Export, environments, and recursive make)
+
+### 基本术语:
+
+环境变量（Environment Variable）：操作系统中的全局变量，可以在当前 shell 会话及其子进程中使用。
+1.1 在 Shell 中设置环境变量
+
+```bash
+# 设置环境变量
+export MY_ENV_VAR="I am an environment variable"
+# 查看环境变量
+echo $MY_ENV_VAR  # 输出：I am an environment variable
+```
+
+1.2 设置`MY_ENV_VAR`后在 Makefile 中使用环境变量
+
+```makefile
+all:
+    echo $$MY_ENV_VAR  # 输出：I am an environment variable
+    echo $(MY_ENV_VAR) # 输出：I am an environment variable
+```
+
+全局变量（Global Variable）
+定义：全局变量是指在 Makefile 中定义的变量，可以在整个 Makefile 中使用。
+
+2.1 在 Makefile 中定义全局变量
+
+```makefile
+#这是一个Makefile的全局变量
+MY_GLOBAL_VAR="I am a global variable"
+
+all:
+    echo $(MY_GLOBAL_VAR)  # 输出：I am a global variable
+    echo $$MY_GLOBAL_VAR   # 输出为空，因为 MY_GLOBAL_VAR 不是环境变量
+
+```
+
+2.2 定义后，导出全局变量为环境变量
+
+```makefile
+MY_GLOBAL_VAR="I am a global variable"
+export MY_GLOBAL_VAR
+
+all:
+    echo $(MY_GLOBAL_VAR)  # 输出：I am a global variable
+    echo $$MY_GLOBAL_VAR   # 输出：I am a global variable
+```
+
+一个具体的例子
+```makefile
+new_contents = "hello:\n\techo \$$(cooly)"
+
+all:
+	mkdir -p subdir
+	printf $(new_contents) | sed -e 's/^ //' > subdir/makefile
+	@echo "---MAKEFILE CONTENTS---"
+	@cd subdir && cat makefile
+	@echo "---END MAKEFILE CONTENTS---"
+	cd subdir && $(MAKE)
+
+# Note that variables and exports. They are set/affected globally.
+cooly = "The subdirectory can see me!"
+export cooly
+# This would nullify the line above: unexport cooly
+
+clean:
+	rm -rf subdir
+
+#输出
+make
+mkdir -p subdir
+printf "hello:\n\techo \$(cooly)" | sed -e 's/^ //' > subdir/makefile
+---MAKEFILE CONTENTS---
+hello:
+        echo $(cooly)---END MAKEFILE CONTENTS---
+cd subdir && make
+make[1]: 进入目录“Parent_dir/subdir”
+echo "The subdirectory can see me!"
+The subdirectory can see me!
+make[1]: 离开目录“Parent_dir/subdir”
+```
+流程:
+1. `,mkdir -p subdir`
+2. 向`subdir/makefile`输入内容
+3. 进入`subdir` 然后`cat makefile`
+4. 进入子文件夹然后递归调用`make`
+5. 因为通过`export`把`cooly `导出为`env_var`所以在子文件夹可以 `echo`
