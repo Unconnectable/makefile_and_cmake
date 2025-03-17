@@ -396,8 +396,11 @@ clean:
 
 ```
 
-```sh
+---
 
+## 删除当前文件夹除了指定文件之外的任何文件
+
+```sh
 find . -maxdepth 1 -type f ! -name 'Makefile' -exec rm -f {} +
 ```
 
@@ -539,13 +542,13 @@ blah:
 blah:
 	echo "hello again"
 #output
-Makefile:7: 警告：覆盖关于目标“blah”的配方
-Makefile:4: 警告：忽略关于目标“blah”的旧配方
+Makefile:7: 警告:覆盖关于目标“blah”的配方
+Makefile:4: 警告:忽略关于目标“blah”的旧配方
 echo "hello again"
 hello again
 ```
 
-单个冒号多个规则会被警告和覆盖，新的规则会覆盖旧的规则
+单个冒号多个规则会被警告和覆盖,新的规则会覆盖旧的规则
 
 ---
 
@@ -559,7 +562,7 @@ all:
 	echo "But this will"
 ```
 
-`@`后面的不会被显示，只会执行
+`@`后面的不会被显示,只会执行
 
 ### 双美元符号
 
@@ -571,17 +574,17 @@ all:
 	@echo $(make_var)
 ```
 
-定义变量`make_var`，第二行`echo`这个变量
-`sh_var`定义在命令行中，要使用他需要在同一行`echo`,而且需要`$$`进行转义
+定义变量`make_var`,第二行`echo`这个变量
+`sh_var`定义在命令行中,要使用他需要在同一行`echo`,而且需要`$$`进行转义
 
 ### 错误处理
 
-`-k` 选项：继续执行即使遇到错误:
-`make -k`假设 Makefile 中有多个目标，其中一个目标的命令失败了，make 会继续执行其他目标，而不是立即停止。
+`-k` 选项:继续执行即使遇到错误:
+`make -k`假设 Makefile 中有多个目标,其中一个目标的命令失败了,make 会继续执行其他目标,而不是立即停止.
 
--i 选项：忽略所有命令的错误:`make -i`,忽略所有命令的错误，继续执行后续的命令
+-i 选项:忽略所有命令的错误:`make -i`,忽略所有命令的错误,继续执行后续的命令
 
-在命令前添加 -：忽略单个命令的错误:
+在命令前添加 -:忽略单个命令的错误:
 
 ```makefile
 all: target1 target2 target3
@@ -592,7 +595,7 @@ target1:
 
 target2:
     echo "Running target2"
-    -false  # 这个命令会失败，但错误会被忽略
+    -false  # 这个命令会失败,但错误会被忽略
 
 target3:
     echo "Running target3"
@@ -640,26 +643,26 @@ make[1]: 离开目录“parent_dir/subdir”
 
 ### 基本术语:
 
-环境变量（Environment Variable）：操作系统中的全局变量，可以在当前 shell 会话及其子进程中使用。
+环境变量(Environment Variable):操作系统中的全局变量,可以在当前 shell 会话及其子进程中使用.
 1.1 在 Shell 中设置环境变量
 
 ```bash
 # 设置环境变量
 export MY_ENV_VAR="I am an environment variable"
 # 查看环境变量
-echo $MY_ENV_VAR  # 输出：I am an environment variable
+echo $MY_ENV_VAR  # 输出:I am an environment variable
 ```
 
 1.2 设置`MY_ENV_VAR`后在 Makefile 中使用环境变量
 
 ```makefile
 all:
-    echo $$MY_ENV_VAR  # 输出：I am an environment variable
-    echo $(MY_ENV_VAR) # 输出：I am an environment variable
+    echo $$MY_ENV_VAR  # 输出:I am an environment variable
+    echo $(MY_ENV_VAR) # 输出:I am an environment variable
 ```
 
-全局变量（Global Variable）
-定义：全局变量是指在 Makefile 中定义的变量，可以在整个 Makefile 中使用。
+全局变量(Global Variable)
+定义:全局变量是指在 Makefile 中定义的变量,可以在整个 Makefile 中使用.
 
 2.1 在 Makefile 中定义全局变量
 
@@ -668,23 +671,24 @@ all:
 MY_GLOBAL_VAR="I am a global variable"
 
 all:
-    echo $(MY_GLOBAL_VAR)  # 输出：I am a global variable
-    echo $$MY_GLOBAL_VAR   # 输出为空，因为 MY_GLOBAL_VAR 不是环境变量
+    echo $(MY_GLOBAL_VAR)  # 输出:I am a global variable
+    echo $$MY_GLOBAL_VAR   # 输出为空,因为 MY_GLOBAL_VAR 不是环境变量
 
 ```
 
-2.2 定义后，导出全局变量为环境变量
+2.2 定义后,导出全局变量为环境变量
 
 ```makefile
 MY_GLOBAL_VAR="I am a global variable"
 export MY_GLOBAL_VAR
 
 all:
-    echo $(MY_GLOBAL_VAR)  # 输出：I am a global variable
-    echo $$MY_GLOBAL_VAR   # 输出：I am a global variable
+    echo $(MY_GLOBAL_VAR)  # 输出:I am a global variable
+    echo $$MY_GLOBAL_VAR   # 输出:I am a global variable
 ```
 
 一个具体的例子
+
 ```makefile
 new_contents = "hello:\n\techo \$$(cooly)"
 
@@ -717,9 +721,255 @@ echo "The subdirectory can see me!"
 The subdirectory can see me!
 make[1]: 离开目录“Parent_dir/subdir”
 ```
+
 流程:
+
 1. `,mkdir -p subdir`
 2. 向`subdir/makefile`输入内容
 3. 进入`subdir` 然后`cat makefile`
 4. 进入子文件夹然后递归调用`make`
 5. 因为通过`export`把`cooly `导出为`env_var`所以在子文件夹可以 `echo`
+
+## **很重要!!**
+
+> 第三步,启动一个新的 make 进程来执行子目录中的 Makefile,执行完后会自动输入消息进入目录和离开目录.但是命令没有离开目录的操作,为什么会回到原来的目录呢？子目录中完成执行后,它会自动返回到父目录
+
+### 语法解析
+
+`create_ = "target_name:\n\techo \$$(var_name)"`:
+
+1.  `\t`制表符,也就是`tab`,要和换行符连起来用满足`makefile`的格式,智能缩进一个`tab`
+
+```makefile
+target:dependece
+	command
+
+#否则就多了一个空格
+target:dependece
+	 command
+```
+
+2. 使用`\$`对`$`进行转义字符 然后解析变量
+
+`printf "hello:\n\techo \$(cooly)" | sed -e 's/^ //' > subdir/makefile`
+
+1. `printf`是输出命令, 输出一个字符串`"hello:\n\techo \$(cooly)"`
+2. `|`管道
+3. `sed -e 's/^ //'`:`sed`是流编辑器,表示对文本处理.`-e`表示后面跟着一个编辑命令.
+4. `s/匹配模式/替换内容/标志`:对应到这里`'s/^ //'`:匹配模式`^`是正则表达式元字符,表示行的开头
+   ` sed -e 's/^ // '` 匹配行开头后紧跟的一个空格字符
+
+### `make`的参数
+
+`make clean run test`:按照顺序依次`clean` `run` `test`
+
+---
+
+# 变量(Variables Pt. 2)
+
+不同的定义方式
+
+1. `=`是递归定义,会在后面展开追加的定义
+2. `:=`是直接定义
+3. `?=`是如果没有定义那就定义,否则不修改当前的定义
+
+```makefile
+one = one ${later_var}
+two = two ${later_var} ${later_var}
+three := three ${later_var} ${later_var}${later_var}
+four = x_4
+four ?= x_5
+five ?= x_5
+later_var= later
+
+all:
+	@echo $(one)
+	@echo $(two)
+	@echo $(three)
+	@echo $(four)
+	@echo $(five)
+
+
+#output
+one later
+two later later
+three
+x_4
+x_5
+```
+
+递归定义
+
+```makefile
+
+one = hello
+one = ${one}
+
+all:
+	echo $(one)
+#output
+Makefile:3: *** Recursive variable 'one' references itself (eventually).  Stop.
+```
+
+这里一直递归定义`one`,会停止运行
+
+一个合理的递归
+
+```makefile
+one = hello
+one := ${one} there
+
+all:
+	echo $(one)
+
+#output
+echo hello there
+hello there
+```
+
+只会递归一次把`one`从 hello 变成 hello there
+
+行首的字符会被删除,行尾会,比如保留`" "`空格
+
+```makefile
+with_spaces = hello
+after = $(with_spaces)there
+
+nullstring =
+space = $(nullstring)
+
+all:
+	echo "$(after)"
+	echo start"$(space)"end
+#output
+echo "hello     there"
+hello     there
+echo start" "end
+start end
+```
+
+同时使用
+
+```makefile
+foo := start
+foo += more
+
+all:
+	echo $(foo)
+```
+
+命令行参数和覆盖(Command line arguments and override)
+
+```makefile
+override option_one = did_override
+option_two = not_override
+all:
+	echo $(option_one)
+	echo $(option_two)
+
+#make 指定参数option_one = hi
+make option_one=hi
+#output
+did_override
+not_override
+```
+
+## 命令列表和定义(List of commands and define)
+
+### 目标特定的变量(Target-specific variables)
+
+在`all`这这个特定的目标里面设置把`one`设置为`cool`,其他情况`one`还是`one`
+
+```makefile
+all: one = cool
+
+all:
+	echo one is defined: $(one)
+
+other:
+	echo one is nothing: $(one)
+```
+
+命令
+
+1.  `make` 等于默认`make all` \
+    输出\
+    `echo one is defined: cool`\
+    `one is defined: cool`
+2.  `make other`\
+     输出\
+     `echo one is defined: nothing`\
+     `one is defined: nothing`
+
+### 特定模式的变量(Pattern-specific variables)
+
+```makefile
+
+%.c: one = cool
+
+blah.c:
+echo one is defined: $(one)
+
+other:
+echo one is nothing: $(one)
+
+```
+
+---
+
+## Makefiles 的条件部分(Conditional part of Makefiles)
+
+### 条件 if/else
+
+```makefile
+foo = ok
+
+all:
+ifeq ($(foo), ok)
+	echo "foo equals ok"
+else
+	echo "nope"
+endif
+```
+
+### 检查一个变量是否为空
+
+```makefile
+nullstring =
+foo = $(nullstring) # end of line; there is a space here
+
+all:
+ifeq ($(strip $(foo)),)
+	echo "foo is empty after being stripped"
+endif
+ifeq ($(nullstring),)
+	echo "nullstring doesn't even have spaces"
+endif
+```
+
+检查一个变量是否已定义
+
+```makefile
+bar =
+foo = $(bar)
+
+all:
+ifdef foo
+	echo "foo is defined"
+endif
+ifndef bar
+	echo "but bar is not"
+endif
+```
+
+### Makelags
+
+检查`make`后面的参数是否出现某一个
+
+```makefile
+all:
+# Search for the "-i" flag. MAKEFLAGS is just a list of single characters, one per flag. So look for "i" in this case.
+ifneq (,$(findstring i, $(MAKEFLAGS)))
+	echo "i was passed to MAKEFLAGS"
+endif
+```
